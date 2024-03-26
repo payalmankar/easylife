@@ -1,0 +1,5 @@
+# pack-refs with: peeled fully-peeled sorted 
+884ca1436f1db6e59329afc9df27a567d8aad0ad refs/remotes/origin/backend_dept
+b5cae68c049c38215d21315baf514ff59c114b0a refs/remotes/origin/cg_easy_life
+1a92fff6c06b02d4c40d46106ab193db7e31d898 refs/remotes/origin/master
+42f7429b651d564b27a5924fab3f594e6091273a refs/remotes/origin/mk_easy_life

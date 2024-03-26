@@ -1,0 +1,43 @@
+{% load admin_list %}
+{% load i18n %}
+<style>
+    /* Consolidated and optimized styles */
+
+    .paginator {
+        margin-top: 30px;
+        text-align: center;
+    }
+
+    .paginator a,
+    .paginator span {
+        padding: 5px 10px;
+        margin: 0 2px;
+        border: 1px solid #bbb;
+        border-radius: 0.25rem;
+        background-color: #f5f5f5;
+        color: #333;
+        text-decoration: underline black 3px;
+    }
+
+    .paginator a.current-page {
+        font-weight: bold;
+        background-color: #ddd;
+    }
+
+    .paginator .btn.show-all {
+        margin-top: 20px;
+    }
+</style>
+
+<p class="paginator d-flex align-items-center justify-content-center">
+    {% if pagination_required %}
+        {% for i in page_range %}
+            {% paginator_number cl i %}
+        {% endfor %}
+    {% endif %}
+    {% if show_all_url %}
+        <a href="{{ show_all_url }}" class="btn btn-secondary show-all m-0">
+            {% translate 'Show all' %}
+        </a>
+    {% endif %}
+</p>

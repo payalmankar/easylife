@@ -1,0 +1,173 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+{% load admin_menu %}
+{% load i18n static %}
+{% load cart_template_tags%}
+{% block extrastyle %}
+{{ block.super }}
+<!-- <link rel="stylesheet" type="text/css" href="{% static 'admin/css/dashboard.css' %}" /> -->
+{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+{% if not is_popup %}
+{% block breadcrumbs %}
+<div class="row mb-2">
+  <div class="col-sm-6" style="display:flex; justify-content: left; gap: 20px; align-items: center;">
+    <label for="from_date">From Date:</label>
+    <input type="date" name="from_date" id="from_date" onchange="updateOrdersCount()">
+
+    <label for="to_date">To Date:</label>
+    <input type="date" name="to_date" id="to_date" onchange="updateOrdersCount()">
+
+
+  </div>
+  <div class="col-sm-6" style="display:flex; justify-content: right; gap: 20px; align-items: center;">
+    {% block nav_bar_center %}
+    <!-- SEARCH FORM -->
+    <form class="form-inline ml-3">
+      <div class="input-group input-group-sm">
+        <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+        <div class="input-group-append">
+          <button class="btn btn-navbar" type="submit">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+    </form>
+    {% endblock %}
+  </div>
+</div>
+{% endblock %}
+{% endif %}
+
+
+{% block content %}
+<div id="content-main" class="container-fluid">
+  <div class="row">
+    <div class="col-lg-3 col-6">
+      <!-- small box -->
+      <div class="small-box bg-info">
+        <div class="inner">
+          <h3>{{request.user|underway_orders_count}}</h3>
+          <p>Number Of Visits</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-eye"></i>
+        </div>
+      </div>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-3 col-6">
+      <!-- small box -->
+      <div class="small-box bg-secondary">
+        <div class="inner">
+          <h3 id="orders_count">{{ request.user|all_orders_count }}</h3>
+          <p>Total Orders</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-bag"></i>
+        </div>
+      </div>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-3 col-6">
+      <!-- small box -->
+      <div class="small-box bg-warning">
+        <div class="inner">
+          <h3 id="all_revenue">{{request.user|all_orders_revenue}}</h3>
+          <p>Total Revenue</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-stats-bars"></i>
+        </div>
+      </div>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-3 col-6">
+      <!-- small box -->
+      <div class="small-box bg-danger">
+        <div class="inner">
+          <h3 id="all_store">{{request.user|all_store_count}}</h3>
+          <p>Number Of Stores Onboarded</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-cube"></i>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- chart -->
+  <div class="row">
+    <!-- <div class="col-xl-12 col-lg-12">
+      <div class="card mb-4">
+        <article class="card-body">
+          <h5 class="card-title">Sale statistics</h5>
+          <canvas id="myChart" height="355" width="890"
+            style="display: block; box-sizing: border-box; height: 284px; width: 712.4px;"></canvas>
+        </article>
+      </div>
+    </div> -->
+    <div class="col-xl-12 col-lg-12">
+      <div class="card mb-4">
+        <article class="card-body">
+          <h5>Today's Order</h5>
+
+          
+        </article>
+      </div>
+
+    </div>
+
+
+
+    {% block sidebar %}
+
+    {% endblock %}
+
+  </div>
+
+
+  <script>
+    function updateOrdersCount() {
+      // Get the selected dates
+      var f_date = document.getElementById('from_date').value;
+      var t_date = document.getElementById('to_date').value;
+
+      const fcurrentTime = '00:00:00+00:00';
+      const tcurrentTime = '23:59:59+00:00';
+
+      var from_date = `${f_date} ${fcurrentTime}`;
+      var to_date = `${t_date} ${tcurrentTime}`;
+
+      if (f_date == '') {
+        from_date = 'None'
+      }
+      if (t_date == '') {
+        to_date = 'None'
+      }
+      console.log('from_date', from_date);
+      console.log('to_date', to_date);
+      // Update the content with the updated date parameters
+      $.ajax({
+        url: '{% url "orders:get_counts_as_date" %}',
+        method: 'GET',
+        data: {
+          from_date: from_date,
+          to_date: to_date
+        },
+        success: function (data) {
+          document.getElementById('orders_count').innerHTML = data.orders_count;
+          document.getElementById('all_revenue').innerHTML = data.revenue_count;
+          document.getElementById('all_store').innerHTML = data.all_store;
+        },
+        error: function (xhr, status, error) {
+          console.error('Error:', error);
+        }
+      });
+    }
+  </script>
+  {% endblock %}
